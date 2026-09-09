@@ -28,7 +28,7 @@ app.baseURL = 'http://localhost:8080/'
 ```
 5. Run the database migration with `docker compose exec app php spark migrate`
 
-6. Open the app at [http://localhost:8080/books]
+6. Open the app at (http://localhost:8080/books)
 
 7. To stop the app run `docker compose down`
 
