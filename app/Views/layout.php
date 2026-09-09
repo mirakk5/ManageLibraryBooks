@@ -8,7 +8,7 @@
 <body>
 <nav class="navbar">
     <div class="container">
-        <a href="/books">📚 Manage Library Books</a>
+        <a href="/books"> Manage Library Books</a>
     </div>
 </nav>
 <div class="container">
