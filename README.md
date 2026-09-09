@@ -1,69 +1,41 @@
-# CodeIgniter 4 Application Starter
+# Manage Library Books
 
-## What is CodeIgniter?
+## How to set up and run the code on a local machine
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+### Prerequisites
+Git Installed
+Docker Desktop installed and running
+### Steps
+1. Clone the repository using the command `git clone https://github.com/mirakk5/ManageLibraryBooks.git`
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+2. Build and start the app and database containers using `docker compose up -d --build`
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+3. Create the environment file using `docker compose exec app cp env .env`
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+4. Open the `.env` file and set the following values: 
 
-## Installation & updates
+```
+CI_ENVIRONMENT = development
+app.baseURL = 'http://localhost:8080/'
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+   database.default.hostname = db
+   database.default.database = library
+   database.default.username = library_user
+   database.default.password = library_pass
+   database.default.DBDriver = MySQLi
+   database.default.port = 3306
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+```
+5. Run the database migration with `docker compose exec app php spark migrate`
 
-## Setup
+6. Open the app at (http://localhost:8080/books)[http://localhost:8080/books]
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+7. To stop the app run `docker compose down`
 
-## Important Change with index.php
-
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
-
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Server Requirements
-
-PHP version 8.2 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+## Design Decisions
+- Docker allows the environment to stay identical across machines to avoid version mismatches for PHP or MySQL versions
+- At first I thought to verify if the title, author, and publication dates were empty directly inside the Controller method that saves the book. However, CodeIgniter allowed me to attach validation rules to the Model itself, which is better since it exists in exactly one place. For instance, if another way to create a book was added, the validation would still be effective through this method
+- I used CodeIgniter's flash data for the "Book successfully added" messages, so that it would only show up exactly once. Therefore, if the page is reloaded and books have been saved, the message will not appear when displaying the table.
+- I used CodeIgniter's `old()` helper method, so the last information typed into the form would be saved. Without out, if all fields were filled out except for the author and a user tried to submit the form, the previous typed responses would be cleared and the user would have to retype their entries.
+- I created a shared layout file instead of rewriting the HTML code multiple times, so I could update the list page, add page, and edit page all at once if necessary. 
+- I chose to use a JavaScript `confirm()` popup to ensure that the confirmation appears when a user wants to delete a book, as this was a simple way to account for this one button.
