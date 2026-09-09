@@ -3,8 +3,8 @@
 ## How to set up and run the code on a local machine
 
 ### Prerequisites
-Git Installed
-Docker Desktop installed and running
+- Git Installed
+- Docker Desktop installed and running
 ### Steps
 1. Clone the repository using the command `git clone https://github.com/mirakk5/ManageLibraryBooks.git`
 
@@ -28,7 +28,7 @@ app.baseURL = 'http://localhost:8080/'
 ```
 5. Run the database migration with `docker compose exec app php spark migrate`
 
-6. Open the app at (http://localhost:8080/books)[http://localhost:8080/books]
+6. Open the app at [http://localhost:8080/books]
 
 7. To stop the app run `docker compose down`
 
